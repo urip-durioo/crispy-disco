@@ -79,9 +79,10 @@ jobs:
 
       - name: Send AAB to Telegram
         run: |
-          FILE='duriooplus-mobile-v2/durioo.aab'
+          TEXT=$(printf '📦 durioo-aab — %s #%s\n%s' "${{ github.ref_name }}" "${{ github.run_number }}" \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts")
           curl -sS --fail-with-body -X POST \
-            "https://api.telegram.org/bot${{ env.torent_downloader_telegram_bot_token }}/sendDocument" \
-            -F chat_id="${{ env.torent_downloader_telegram_chat_id }}" \
-            -F document=@"$FILE" \
-            -F caption="📦 ${FILE##*/} — ${{ github.ref_name }} #${{ github.run_number }}"
+            "https://api.telegram.org/bot${{ env.torent_downloader_telegram_bot_token }}/sendMessage" \
+            -d chat_id="${{ env.torent_downloader_telegram_chat_id }}" \
+            --data-urlencode text="$TEXT"
+
