@@ -37,6 +37,11 @@ jobs:
         run: |
           curl -fsSL https://deb.nodesource.com/setup_22.x | sudo sh - 
           sudo apt-get install -y nodejs
+          # fire-tv-prod pins packageManager yarn@4.18.1. Without Corepack the
+          # runner's Yarn 1.22.22 refuses Install Deps immediately.
+          corepack enable
+          corepack prepare yarn@4.18.1 --activate
+          yarn --version
           sudo npm install -g eas-cli@latest
       
       - name: Setup Android SDK
@@ -61,7 +66,10 @@ jobs:
 
 
       - name: Install Deps
-        run: cd duriooplus-mobile-v2/ && yarn
+        run: |
+          cd duriooplus-mobile-v2/
+          yarn --version
+          yarn
 
       - name: Build aab
         run: cd duriooplus-mobile-v2/ && yarn build-prod-tv-firetv --local --output durioo.aab
